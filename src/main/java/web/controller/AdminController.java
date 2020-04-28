@@ -6,7 +6,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import web.model.Role;
 import web.model.User;
-import web.service.RoleService;
 import web.service.UserService;
 
 @Controller
@@ -16,8 +15,6 @@ public class AdminController {
 
     @Autowired
     UserService userService;
-    @Autowired
-    RoleService roleService;
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteUser(@RequestParam("id") Long id){
@@ -28,9 +25,7 @@ public class AdminController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addUser(@ModelAttribute User user, @RequestParam("role") String newRole){
        String roleName = "ROLE_" + newRole.toUpperCase();
-       Role role = roleName.contains("ADMIN") ? roleService.getRoleById(1L) : roleService.getRoleById(2L);
-       role.getUsers().add(user);
-       user.getRoles().add(role);
+       user.getRoles().add(new Role(roleName));
        userService.addUser(user);
        return "redirect:/admin";
     }

@@ -22,9 +22,6 @@ public class Role implements GrantedAuthority {
     Long id;
     String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles", cascade = CascadeType.ALL)
-    private List<User> users;
-
     public Role(String name) {
         this.name = name;
     }
