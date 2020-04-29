@@ -7,48 +7,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import web.model.User;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDAO {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<User> listOfUsers() {
-        Session session = sessionFactory.openSession();
-        return (List<User>) session.createQuery("FROM User ").getResultList();
+        return (List<User>) entityManager.createQuery("FROM User").getResultList();
     }
 
     @Override
     public void addUser(User user){
-        Session session = sessionFactory.getCurrentSession();
-        session.save(user);
+        entityManager.persist(user);
     }
 
     @Override
     public void deleteUser(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("DELETE User u WHERE u.id = ?1");
-        query.setParameter(1, id);
-        query.executeUpdate();
+        entityManager.createQuery("DELETE FROM User WHERE id = ?1").setParameter(1, id).executeUpdate();
     }
 
     @Override
     public void editUser(Long id, User user){
-        Session session = sessionFactory.getCurrentSession();
-        User oldUser = session.get(User.class, id);
+        User oldUser = entityManager.find(User.class, id);
         oldUser.setUsername(user.getUsername());
         oldUser.setPassword(user.getPassword());
-        session.update(oldUser);
+        entityManager.merge(oldUser);
     }
 
     @Override
     public User loadUserByUsername(String username) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<User> query = session.createQuery("FROM User WHERE username = ?1");
-        query.setParameter(1, username);
-        return query.uniqueResult();
+       return (User) entityManager.createQuery("FROM User WHERE username = ?1").setParameter(1, username).getSingleResult();
     }
 }
