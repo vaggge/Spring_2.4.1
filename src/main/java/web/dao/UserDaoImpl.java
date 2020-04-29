@@ -30,7 +30,7 @@ public class UserDaoImpl implements UserDAO {
 
     @Override
     public void deleteUser(Long id) {
-        entityManager.createQuery("DELETE FROM User WHERE id = ?1").setParameter(1, id).executeUpdate();
+        entityManager.createQuery("DELETE FROM User WHERE id = :id").setParameter("id", id).executeUpdate();
     }
 
     @Override
@@ -43,6 +43,6 @@ public class UserDaoImpl implements UserDAO {
 
     @Override
     public User loadUserByUsername(String username) {
-       return (User) entityManager.createQuery("FROM User WHERE username = ?1").setParameter(1, username).getSingleResult();
+       return (User) entityManager.createQuery("FROM User WHERE username = :id").setParameter("id", username).getSingleResult();
     }
 }
